@@ -3,3 +3,11 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+
+contact:
+    path: /contact
+    controller: App\Controller\ContactController::contact
+
+success_page:
+    path: /success
+    controller: App\Controller\ContactController::success

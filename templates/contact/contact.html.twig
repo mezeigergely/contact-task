@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Kapcsolat{% endblock %}
+
+{% block body %}
+    <div class="card w-50 mx-auto mt-5">
+    <div class="card-body">
+        <h3 class="card-title mb-5">Kapcsolat</h3>
+        {{ form_start(form) }}
+        <div class="form-group mb-3">
+            {{ form_row(form.name, {'attr': {'class': 'form-control'}, 'label_attr': {'class': 'form-label'}}) }}
+        </div>
+        <div class="form-group mb-3">
+            {{ form_row(form.email, {'attr': {'class': 'form-control'}, 'label_attr': {'class': 'form-label'}}) }}
+        </div>
+        <div class="form-group mb-3">
+            {{ form_row(form.message, {'attr': {'class': 'form-control'}, 'label_attr': {'class': 'form-label'}}) }}
+        </div>
+        <button type="button" class="btn btn-primary mt-3">Küldés</button>
+        {{ form_end(form) }}
+    </div>
+</div>
+
+{% endblock %}
+
