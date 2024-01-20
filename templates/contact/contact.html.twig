@@ -16,7 +16,9 @@
         <div class="form-group mb-3">
             {{ form_row(form.message, {'attr': {'class': 'form-control'}, 'label_attr': {'class': 'form-label'}}) }}
         </div>
-        <button type="button" class="btn btn-primary mt-3">Küldés</button>
+        <div class="form-group mb-3">
+            {{ form_row(form.button, {'attr': {'class': 'btn btn-primary'}}) }}
+        </div>
         {{ form_end(form) }}
     </div>
 </div>

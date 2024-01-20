@@ -7,6 +7,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\Ticket;
 
 class ContactController extends AbstractController
 {
@@ -24,18 +26,18 @@ class ContactController extends AbstractController
     ];
     
     #[Route('/contact', name: 'contact')]
-    public function contact(Request $request): Response
+    public function contact(Request $request, EntityManagerInterface $entityManager)
     {
-        $form = $this->createForm(ContactFormType::class);
-
+        $ticket = new Ticket();
+        $form = $this->createForm(ContactFormType::class, $ticket);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Adatok feldolgozása, például e-mail küldés, adatbázis mentés, stb.
-            // Példa: $data = $form->getData();
-            // ... feldolgozás ...
+            $entityManager->persist($ticket);
+            $entityManager->flush();
 
-            // Átirányítás vagy más válasz generálása
+            // Esetleg további logika vagy válasz küldése
+
             return $this->redirectToRoute('success_page');
         }
 

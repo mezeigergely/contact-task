@@ -8,6 +8,8 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use App\Entity\Ticket;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class ContactFormType extends AbstractType
 {
@@ -22,13 +24,16 @@ class ContactFormType extends AbstractType
             ])
             ->add('message', TextareaType::class, [
                 'label' => 'Üzenet',
+            ])
+            ->add('button', SubmitType::class, [
+                'label' => 'Küldés',
             ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            // Configure your form options here
+            'data_class' => Ticket::class,
         ]);
     }
 }
