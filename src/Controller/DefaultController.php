@@ -6,7 +6,7 @@ use App\DTO\AdminFormDTO;
 use App\DTO\TicketFormDTO;
 use App\Entity\Admin;
 use App\Entity\Ticket;
-use App\Form\CreateAdminFormType;
+use App\Form\AdminFormType;
 use App\Form\TicketFormType;
 use App\Repository\TicketRepository;
 use App\Repository\AdminRepository;
@@ -78,7 +78,7 @@ class DefaultController extends AbstractController
     public function createAdmin(Request $request, EntityManagerInterface $entityManager, SessionInterface $session)
     {
         $adminDTO = new AdminFormDTO();
-        $form = $this->createForm(CreateAdminFormType::class, $adminDTO);
+        $form = $this->createForm(AdminFormType::class, $adminDTO);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -115,7 +115,7 @@ class DefaultController extends AbstractController
     #[Route('/admin/{id}/edit', name: 'app_admin_edit')]
     public function editAdmin(Admin $admin, Request $request, EntityManagerInterface $entityManager)
     {
-        $form = $this->createForm(CreateAdminFormType::class, $admin);
+        $form = $this->createForm(AdminFormType::class, $admin);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
