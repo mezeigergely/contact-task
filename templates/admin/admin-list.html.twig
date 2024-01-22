@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+{% import 'macros.twig' as macros %}
+
+{% block title %}Adminok{% endblock %}
+
+{% block body %}
+{% if app.session.flashbag.has('success') %}
+    {{ macros.flashMessage('success', app.session.flashbag.get('success')[0]) }}
+{% endif %}
+{% if app.session.flashbag.has('error') %}
+    {{ macros.flashMessage('error', app.session.flashbag.get('error')[0]) }}
+{% endif %}
+    <div class="card w-50 mx-auto mt-5">
+        <div class="card-body">
+            <h3 class="card-title mb-5">Adminok</h3>
+            <ol class="list-group list-group-numbered mb-3">
+                {% for admin in items %}
+                <li class="list-group-item d-flex justify-content-between align-items-start">
+                    <div class="ms-2 me-auto">
+                        <div class="fw-bold">{{ admin.username }}</div>
+                    </div>
+                    <a class="badge bg-secondary" href="{{ path('app_admin_edit', {'id': admin.id}) }}">szerkesztés</a>
+                </li>
+                {% endfor %}
+            </ol>  
+            <div class="pagination mb-3">{{ knp_pagination_render(items) }}</div>
+            <a class="btn btn-primary mb-3" href="{{ path('app_admin_create') }}">Admin felvétele</a>
+        </div>
+    </div>
+{% endblock %}

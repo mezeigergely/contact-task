@@ -11,7 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use App\Entity\Ticket;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
-class ContactFormType extends AbstractType
+class TicketFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {

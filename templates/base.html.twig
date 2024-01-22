@@ -15,7 +15,29 @@
     </head>
     <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-body" data-bs-theme="dark">
-        <a class="navbar-brand ms-auto" href="#">Admin</a>
+        <div class="container-fluid">
+            {% if is_granted('ROLE_USER') %}
+                <span class="navbar-brand">Üdv {{app.user.username}}!</span>
+            {% endif %}
+            <div class="collapse navbar-collapse" id="navbarText">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{{ path('app_contact') }}">Kontakt</a>
+                    </li>
+                    {% if is_granted('ROLE_USER') %}
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="{{ path('app_ticket_list')}}">Ticketek</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="{{ path('app_admin_list')}}">Adminok</a>
+                        </li>
+                    {% endif %}
+                </ul>
+                <span class="navbar-text">
+                    <a class="nav-link active" href="{{ app.user ? path('logout') : path('login') }}">{{ app.user ? 'Kilépés' : 'Admin' }}</a>
+                </span>
+            </div>
+        </div>
     </nav>
         {% block body %}{% endblock %}
     </body>
