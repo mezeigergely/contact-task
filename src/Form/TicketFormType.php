@@ -8,8 +8,8 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use App\Entity\Ticket;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use App\DTO\TicketFormDTO;
 
 class TicketFormType extends AbstractType
 {
@@ -33,7 +33,7 @@ class TicketFormType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Ticket::class,
+            'data_class' => TicketFormDTO::class,
         ]);
     }
 }

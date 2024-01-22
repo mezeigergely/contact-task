@@ -8,7 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use App\Entity\Admin;
+use App\DTO\AdminFormDTO;
 
 class CreateAdminFormType extends AbstractType
 {
@@ -29,7 +29,7 @@ class CreateAdminFormType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Admin::class,
+            'data_class' => AdminFormDTO::class,
         ]);
     }
 }

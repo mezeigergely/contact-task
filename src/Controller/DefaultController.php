@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\DTO\AdminFormDTO;
+use App\DTO\TicketFormDTO;
 use App\Entity\Admin;
 use App\Entity\Ticket;
 use App\Form\CreateAdminFormType;
@@ -50,14 +52,20 @@ class DefaultController extends AbstractController
     #[Route('/contact', name: 'app_contact', methods: ['GET', 'POST'])]
     public function createTicket(Request $request, EntityManagerInterface $entityManager, SessionInterface $session)
     {
-        $adminEntity = new Ticket();
-        $form = $this->createForm(TicketFormType::class, $adminEntity);
+        $ticketDTO = new TicketFormDTO();
+        $form = $this->createForm(TicketFormType::class, $ticketDTO);
         $form->handleRequest($request);
-        $newTicket = $this->create($adminEntity, $form, $entityManager);
-        if($newTicket){
+        if ($form->isSubmitted() && $form->isValid()) {
+            $ticketEntity = new Ticket();
+            $ticketEntity->setName($ticketDTO->getName());
+            $ticketEntity->setEmail($ticketDTO->getEmail());
+            $ticketEntity->setMessage($ticketDTO->getMessage());
+    
+            $entityManager->persist($ticketEntity);
+            $entityManager->flush();
             $session->getFlashBag()->add('success', $this::TICKET_SUCCESS_MESSAGE);
-            
-            return $this->redirectToRoute('app_contact', [], Response::HTTP_SEE_OTHER);
+
+            return $this->redirectToRoute('app_contact');
         }
 
         return $this->render('contact/contact.html.twig',[
@@ -69,37 +77,26 @@ class DefaultController extends AbstractController
     #[Route('/admin/create-admin', name: 'app_admin_create', methods: ['GET', 'POST'])]
     public function createAdmin(Request $request, EntityManagerInterface $entityManager, SessionInterface $session)
     {
-        $adminEntity = new Admin();
-        $form = $this->createForm(CreateAdminFormType::class, $adminEntity);
+        $adminDTO = new AdminFormDTO();
+        $form = $this->createForm(CreateAdminFormType::class, $adminDTO);
         $form->handleRequest($request);
-        $newAdmin = $this->create($adminEntity, $form, $entityManager);
-        if($newAdmin){
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $adminEntity = new Admin();
+            $adminEntity->setUsername($adminDTO->getUsername());
+            $adminEntity->setPassword($this->hasher->hashPassword($adminEntity, $adminDTO->getPassword()));
+    
+            $entityManager->persist($adminEntity);
+            $entityManager->flush();
             $session->getFlashBag()->add('success', $this::CREATE_SUCCESS);
-            
-            return $this->redirectToRoute('app_admin_list', [], Response::HTTP_SEE_OTHER);
+
+            return $this->redirectToRoute('app_admin_list');
         }
 
         return $this->render('admin/admin-create.html.twig',[
             'form' => $form->createView()
         ]);
     }
-
-
-    protected function create($entity, $form, EntityManagerInterface $entityManager): bool
-    {
-        if ($form->isSubmitted() && $form->isValid()) {
-            if ($entity instanceof Admin) {
-                $hashedPassword = $this->hasher->hashPassword($entity, $entity->getPassword());
-                $entity->setPassword($hashedPassword);
-            }
-            $entityManager->persist($entity);
-            $entityManager->flush();
-            return true;
-        }
-
-        return false;
-    }
-
 
     protected function paginateList($entityList, $paginator, $request, $template) : Response
     {
