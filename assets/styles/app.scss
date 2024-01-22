@@ -1,0 +1,15 @@
+@import '~bootstrap/scss/bootstrap';
+
+.alert,
+#success-message,
+#error-message{
+    position: absolute;
+    width: 100%;
+    z-index: 1;
+}
+
+#close-success,
+#close-error{
+    cursor: pointer !important;
+    float: right !important;
+}

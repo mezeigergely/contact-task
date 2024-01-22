@@ -1,10 +1,19 @@
 import './bootstrap.js';
-/*
- * Welcome to your app's main JavaScript file!
- *
- * This file will be included onto the page via the importmap() Twig function,
- * which should already be in your base.html.twig.
- */
-import './styles/app.css';
+import './styles/app.scss';
 
-console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');
+document.addEventListener('DOMContentLoaded', function () {
+    var successMessage = document.getElementById('success-message');
+    var closeSuccess = document.getElementById('close-success');
+
+    function hideSuccessMessage() {
+        successMessage.style.display = 'none';
+    }
+
+    if (successMessage) {
+        setTimeout(hideSuccessMessage, 5000);
+
+        if (closeSuccess) {
+            closeSuccess.addEventListener('click', hideSuccessMessage);
+        }
+    }
+});

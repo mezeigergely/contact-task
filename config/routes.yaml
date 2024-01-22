@@ -3,3 +3,35 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+
+login:
+    path: /admin/login
+    controller: App\Controller\SecurityController::login
+
+logout:
+    path: /admin/logout
+    controller: App\Controller\SecurityController::logout
+
+home:
+    path: /
+    controller: App\Controller\DefaultController::createTicket
+
+app_contact:
+    path: /contact
+    controller: App\Controller\DefaultController::createTicket
+
+app_ticket_list:
+    path: /admin/
+    controller: App\Controller\DefaultController::ticketList
+
+app_admin_list:
+    path: /admin/admin-list
+    controller: App\Controller\DefaultController::adminList
+
+app_admin_create:
+    path: /admin/admin-create
+    controller: App\Controller\DefaultController::createAdmin
+
+app_admin_edit:
+    path: /admin/{id}/edit
+    controller: App\Controller\DefaultController::editAdmin

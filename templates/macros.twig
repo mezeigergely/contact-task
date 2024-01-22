@@ -1,0 +1,8 @@
+{% macro flashMessage(type, message) %}
+    <div id="{{ type }}-message" class="alert alert-{{ type }}">
+        {{ message }}
+        {% if type == 'success' %}
+            <span id="close-{{ type }}" style="cursor: pointer;"> &#10006;</span>
+        {% endif %}
+    </div>
+{% endmacro %}
