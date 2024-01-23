@@ -13,3 +13,10 @@
     cursor: pointer !important;
     float: right !important;
 }
+
+.form-group ul,
+.form-group ul li {
+    color: red !important;
+    list-style-type: none !important;
+    padding: 0 !important;
+}
