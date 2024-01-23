@@ -89,6 +89,7 @@ class DefaultController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $adminEntity->setRoles(['ROLE_USER']);
             $hashedPassword = $this->hasher->hashPassword($adminEntity, $adminEntity->getPassword());
             $adminEntity->setPassword($hashedPassword);
             $this->entityManager->persist($adminEntity);

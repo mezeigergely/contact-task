@@ -20,6 +20,7 @@ class AppFixtures extends Fixture
     {
         $admin = new Admin($this->hasher);
         $admin->setUsername('admin');
+        $admin->setRoles(['ROLE_USER']);
         $hashedPassword = $this->hasher->hashPassword($admin, 'password');
         $admin->setPassword($hashedPassword);
 
