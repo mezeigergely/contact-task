@@ -20,3 +20,7 @@
     list-style-type: none !important;
     padding: 0 !important;
 }
+
+.list-group-numbered > .list-group-item::before{
+    content: none !important;
+}

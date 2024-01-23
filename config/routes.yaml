@@ -21,7 +21,7 @@ app_contact:
     controller: App\Controller\DefaultController::createTicket
 
 app_ticket_list:
-    path: /admin/
+    path: /admin/ticket-list
     controller: App\Controller\DefaultController::ticketList
 
 app_admin_list:

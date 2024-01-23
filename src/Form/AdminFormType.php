@@ -31,7 +31,6 @@ class AdminFormType extends AbstractType
         ])
         ->add('password', PasswordType::class, [
             'label' => 'Jelszó',
-            'mapped' => false,
             'constraints' => [
                 new NotBlank([
                     'message' => 'Hiba! Kérjük töltsd ki a Jelszó mezőt!',

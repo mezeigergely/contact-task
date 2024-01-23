@@ -29,6 +29,8 @@ class Admin implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
+    const CREATE_SUCCESS = 'Sikeres létrehozás!';
+
     public function getId(): ?int
     {
         return $this->id;

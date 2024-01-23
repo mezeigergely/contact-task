@@ -1,0 +1,7 @@
+{% import 'macros.twig' as macros %}
+{% if app.session.flashbag.has('success') %}
+    {{ macros.flashMessage('success', app.session.flashbag.get('success')[0]) }}
+{% endif %}
+{% if app.session.flashbag.has('error') %}
+    {{ macros.flashMessage('error', app.session.flashbag.get('error')[0]) }}
+{% endif %}

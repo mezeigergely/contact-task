@@ -9,44 +9,50 @@ use App\Form\AdminFormType;
 use App\Form\TicketFormType;
 use App\Repository\TicketRepository;
 use App\Repository\AdminRepository;
+use App\Service\DefaultService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class DefaultController extends AbstractController
 {
-    const TICKET_SUCCESS_MESSAGE = 'Köszönjük szépen a kérdésedet! Válaszunkkal hamarosan keresünk a megadott e-mail címen.';
-    const CREATE_SUCCESS = 'Sikeres létrehozás!';
-    const CREATE_ERROR = 'Sikertelen létrehozás!';
-
     private $hasher;
     private $entityManager;
+    private $ticketRepository;
+    private $adminRepository;
+    private $defaultService;
     
-    public function __construct(UserPasswordHasherInterface $hasher, EntityManagerInterface $entityManager)
+    public function __construct(
+        UserPasswordHasherInterface $hasher,
+        EntityManagerInterface $entityManager,
+        TicketRepository $ticketRepository,
+        AdminRepository $adminRepository,
+        DefaultService $defaultService)
     {
         $this->hasher = $hasher;
         $this->entityManager = $entityManager;
+        $this->ticketRepository = $ticketRepository;
+        $this->adminRepository = $adminRepository;
+        $this->defaultService = $defaultService;
     }
 
 
-    #[Route('/admin', name: 'app_ticket_list', methods: ['GET'])]
-    public function ticketList(TicketRepository $ticketRepository, PaginatorInterface $paginator, Request $request): Response
+    #[Route('/admin/ticket-list', name: 'app_ticket_list', methods: ['GET'])]
+    public function ticketList(Request $request): Response
     {
-        $tickets = $ticketRepository->findAll();
-        return $this->paginateList($tickets, $paginator, $request, 'admin/ticket-list.html.twig');
+        return $this->paginateList($this->ticketRepository, $request, 'admin/ticket-list.html.twig');
     }
 
 
     #[Route('/admin/admin-list', name: 'app_admin_list', methods: ['GET'])]
-    public function adminList(AdminRepository $adminRepository, PaginatorInterface $paginator, Request $request): Response
+    public function adminList(Request $request): Response
     {
-        $admins = $adminRepository->findAll();
-        return $this->paginateList($admins, $paginator, $request, 'admin/admin-list.html.twig');
+        return $this->paginateList($this->adminRepository, $request, 'admin/admin-list.html.twig');
     }
 
 
@@ -64,7 +70,7 @@ class DefaultController extends AbstractController
     
             $this->entityManager->persist($ticketEntity);
             $this->entityManager->flush();
-            $session->getFlashBag()->add('success', $this::TICKET_SUCCESS_MESSAGE);
+            $session->getFlashBag()->add('success', $ticketDTO::TICKET_SUCCESS_MESSAGE);
 
             return $this->redirectToRoute('app_contact');
         }
@@ -83,29 +89,17 @@ class DefaultController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $adminEntity->setPassword($this->hasher->hashPassword($adminEntity, $adminEntity->getPassword()));
+            $hashedPassword = $this->hasher->hashPassword($adminEntity, $adminEntity->getPassword());
+            $adminEntity->setPassword($hashedPassword);
             $this->entityManager->persist($adminEntity);
             $this->entityManager->flush();
-            $session->getFlashBag()->add('success', $this::CREATE_SUCCESS);
+            $session->getFlashBag()->add('success', $adminEntity::CREATE_SUCCESS);
 
             return $this->redirectToRoute('app_admin_list');
         }
 
         return $this->render('admin/admin-create.html.twig',[
             'form' => $form->createView()
-        ]);
-    }
-
-    protected function paginateList($entityList, $paginator, $request, $template) : Response
-    {
-        $result = $paginator->paginate(
-            $entityList,
-            $request->query->getInt('page', 1),
-            10
-        );
-
-        return $this->render($template, [
-            'items' => $result,
         ]);
     }
     
@@ -116,13 +110,7 @@ class DefaultController extends AbstractController
         $adminRepository = $this->entityManager->getRepository(Admin::class);
         $queryBuilder = $adminRepository->createQueryBuilder('a');
 
-        $existingAdmin = $queryBuilder
-            ->where('a.username = :username')
-            ->andWhere('a.id != :id')
-            ->setParameter('username', $adminEntity->getUsername())
-            ->setParameter('id', $id)
-            ->getQuery()
-            ->getOneOrNullResult();
+        $existingAdmin = $this->defaultService->existingAdmin($queryBuilder, $adminEntity, $id);
 
         $form = $this->createForm(AdminFormType::class, $adminEntity);
         $form->handleRequest($request);
@@ -130,7 +118,7 @@ class DefaultController extends AbstractController
         if (!$existingAdmin && $form->isSubmitted() && $form->isValid()) {
             $adminEntity->setPassword($this->hasher->hashPassword($adminEntity, $adminEntity->getPassword()));
             $this->entityManager->flush();
-            $session->getFlashBag()->add('success', $this::CREATE_SUCCESS);
+            $session->getFlashBag()->add('success', $adminEntity::CREATE_SUCCESS);
 
             return $this->redirectToRoute('app_admin_list');
         }
@@ -138,6 +126,29 @@ class DefaultController extends AbstractController
         return $this->render('admin/admin-edit.html.twig', [
             'form' => $form->createView(),
             'id' => $id
+        ]);
+    }
+
+    protected function paginateList($repository, $request, $template) : Response
+    {
+        $queryBuilder = $repository->createQueryBuilder('q');
+        $queryBuilder->orderBy('q.id', 'ASC');
+        $limit = 5;
+        $page = $request->get('page', 1);
+        $paginator = new Paginator($queryBuilder);
+        $paginator
+            ->getQuery()
+            ->setFirstResult($limit * ($page - 1))
+            ->setMaxResults($limit)
+        ;
+        $total = $paginator->count();
+        $lastPage = (int) ceil($total / $limit);
+
+        return $this->render($template, [
+            'paginator' => $paginator,
+            'total' => $total,
+            'lastPage' => $lastPage,
+            'page' => $page,
         ]);
     }
 }

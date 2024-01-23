@@ -1,16 +1,10 @@
 
 {% extends 'base.html.twig' %}
-{% import 'macros.twig' as macros %}
 
 {% block title %}Admin felvétele{% endblock %}
 
 {% block body %}
-{% if app.session.flashbag.has('success') %}
-    {{ macros.flashMessage('success', app.session.flashbag.get('success')[0]) }}
-{% endif %}
-{% if app.session.flashbag.has('error') %}
-    {{ macros.flashMessage('error', app.session.flashbag.get('error')[0]) }}
-{% endif %}
+    {% include 'messages.html.twig' %}
     <div class="card w-50 mx-auto mt-5">
         <div class="card-body">
             <h3 class="card-title mb-5">Admin felvétele</h3>

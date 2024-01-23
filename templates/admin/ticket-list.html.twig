@@ -6,18 +6,19 @@
     <div class="card w-50 mx-auto mt-5">
         <div class="card-body">
             <h3 class="card-title mb-5">Ticketek</h3>
-            <ol class="list-group list-group-numbered">
-                {% for ticket in items %}
+            <ol class="list-group list-group-numbered mb-3">
+                {% for ticket in paginator %}
                 <li class="list-group-item d-flex justify-content-between align-items-start">
+                    <span class="badge bg-primary rounded-pill">{{ ticket.id }}</span>
                     <div class="ms-2 me-auto">
                         <div class="fw-bold">{{ ticket.name }}</div>
-                        {{ ticket.message }}
+                        <span class="badge bg-primary">{{ ticket.email }}</span>
+                        <div><span>{{ ticket.message }}</span></div>
                     </div>
-                    <span class="badge bg-primary rounded-pill">{{ ticket.email }}</span>
                 </li>
                 {% endfor %}
-            </ol>  
-            <div class="pagination">{{ knp_pagination_render(items) }}</div>
+            </ol>
+            {% include 'paginator/paginator.html.twig' %}
         </div>
     </div>
 {% endblock %}

@@ -8,6 +8,8 @@ class TicketFormDTO
     private $email;
     private $message;
 
+    const TICKET_SUCCESS_MESSAGE = 'Köszönjük szépen a kérdésedet! Válaszunkkal hamarosan keresünk a megadott e-mail címen.';
+
     public function getName(): ?string
     {
         return $this->name;
